@@ -2,4 +2,7 @@
 **/dataset/*
 
 # Ignore venv dir
-**/venv/*
+**/textile-venv/*
+
+# Ignore data preprocessign steps
+**/preprocess/*
