@@ -1,8 +1,7 @@
-# Ignore dataset directory
+# Ignore directories
 **/dataset/*
-
-# Ignore venv dir
 **/textile-venv/*
-
-# Ignore data preprocessign steps
 **/preprocess/*
+
+# Ignore files
+updates.txt
