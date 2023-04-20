@@ -4,8 +4,7 @@ import matplotlib.pyplot as plt
 import cv2 as cv
 import h5py
 
-# df_org = pd.read_csv(r'dataset/train64.csv')
-# df = df_org[['angle', 'indication_type', 'indication_value']]
+# label_dict = {'good':0, 'holes_cuts':1, 'threaderror':2, 'oilstains_colorerror':3, 'wrinkles':4, 'foreignbodies':5}
 file_path = r'/home/soucs/Python/textile-defect-inspection/dataset/textile_defect_data.hdF5'
 imgs = h5py.File(file_path)['jute_defect_imgs']
 labels = h5py.File(file_path)['jute_defect_labels'][:]
@@ -25,7 +24,6 @@ for img in imgs:
     features['c5'].append(c5)
 
 hist_features = pd.DataFrame(features)
-print(hist_features.label.value_counts())
 
 hist_features.to_csv(r'/home/soucs/Python/textile-defect-inspection/dataset/hist_features.csv', index=False)
 

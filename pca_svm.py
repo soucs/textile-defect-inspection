@@ -2,57 +2,39 @@ import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.metrics import accuracy_score, confusion_matrix
 
-df = pd.read_csv(r'/home/soucs/Python/textile-defect-inspection/dataset/textile_defects.csv')
-df['indication_value'] = df['indication_value'].apply(lambda label:1 if label!=0 else 0)
+# label_dict = {'good':0, 'holes_cuts':1, 'threaderror':2, 'oilstains_colorerror':3, 'wrinkles':4, 'foreignbodies':5}
+file_path = r'/home/soucs/Python/textile-defect-inspection/dataset/hist_features.csv'
+df = pd.read_csv(file_path)
 
 X = df[['c1', 'c2', 'c3', 'c4', 'c5']]
-y = df['indication_value']
+y = df['label']
 
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.3, random_state=1)
 
-X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.5, random_state=1)
-print((y_test==0).sum())
-
-
-pca = PCA()
-pca.fit(X_train)
+# Principal Component Analysis
+pca = PCA().fit(X_train)
 Xpca = pca.transform(X_train)
     
-# Explained variance ration by each principal component
+# Explained variance ratio by each principal component
 v_ratio = pca.explained_variance_ratio_
-v_ratio = [round(v*100,2) for v in v_ratio]
+v_ratio = [v*100 for v in v_ratio]
+print('PCA:',v_ratio)
 
-print(v_ratio)
+pca = PCA(n_components=1)
+X_train = pca.fit_transform(X_train)
+X_test = pca.transform(X_test)
 
-# Taking components that explain atleast 95% of variance
-count, explained_v = 0, 0
-for v in v_ratio:
-    explained_v += v
-    count += 1
-    if explained_v>=95:
-        break
+# SVM Classification
+svc = SVC(decision_function_shape='ovo')
+svc = SVC()
 
-# Getting only significant principal components
-signif_pca = PCA(n_components=count).fit(X_train)
+svc.fit(X_train, y_train)
+y_pred = svc.predict(X_test)
 
-# Applying dimmensionality reduction
-X_train_final = signif_pca.transform(X_train)
-X_test_final = signif_pca.transform(X_test)
+print(accuracy_score(y_test, y_pred)) 
+print(confusion_matrix(y_test, y_pred))
 
-print(X_train_final)
-
-
-# svc = SVC(decision_function_shape='ovo')
-# svc = SVC()
-
-# svc.fit(X_train, y_train)
-# y_pred = svc.predict(X_test)
-
-# print(accuracy_score(y_test, y_pred)) # 0.36920833333333336 for non-binary
-# print(precision_score(y_test, y_pred))
-# print(recall_score(y_test, y_pred))
-# print(y_test[y_test!=y_pred].sum())
-
-'''Giving 83% accuracy for defect/non-defect binary classification'''
-
+# Accuracy: 0.24666666666666667; svm; all getting predicted as good
+# Accuracy: 0.35555555555555557; svm with pca; wrinkles prediction better
