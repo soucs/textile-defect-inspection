@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
@@ -13,22 +14,20 @@ y = df['label']
 
 X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.3, random_state=1)
 
-# Principal Component Analysis
-pca = PCA().fit(X_train)
-Xpca = pca.transform(X_train)
+# # Principal Component Analysis
+# pca = PCA().fit(X_train)
+# Xpca = pca.transform(X_train)
     
-# Explained variance ratio by each principal component
-v_ratio = pca.explained_variance_ratio_
-v_ratio = [v*100 for v in v_ratio]
-print('PCA:',v_ratio)
+# # Explained variance ratio by each principal component
+# v_ratio = pca.explained_variance_ratio_
+# v_ratio = [v*100 for v in v_ratio]
+# print('PCA:',v_ratio)
 
-pca = PCA(n_components=1)
-X_train = pca.fit_transform(X_train)
-X_test = pca.transform(X_test)
+# pca = PCA(n_components=1)
+# X_train, X_test = pca.fit_transform(X_train), pca.transform(X_test)
 
 # SVM Classification
-svc = SVC(decision_function_shape='ovo')
-svc = SVC()
+svc = SVC(decision_function_shape='ovo', kernel='rbf')
 
 svc.fit(X_train, y_train)
 y_pred = svc.predict(X_test)
