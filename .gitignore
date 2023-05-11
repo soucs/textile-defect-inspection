@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Ignore directories
 **/dataset/*
 **/textile-venv/*
@@ -5,3 +6,6 @@
 
 # Ignore files
 updates.txt
+=======
+**/dataset/*
+>>>>>>> 71cfefa (gitignore)
