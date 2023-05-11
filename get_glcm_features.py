@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import h5py
 
-from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import AgglomerativeClustering, DBSCAN
 from statistics import mode
 
 # label_dict = {'good':0, 'holes_cuts':1, 'threaderror':2, 'oilstains_colorerror':3, 'wrinkles':4, 'foreignbodies':5}
@@ -70,6 +70,7 @@ def cluster_contours(contours):
         vect = cont.shape[0], *tuple(np.median(cont,axis=0))
         contour_vect.append(vect)
     agglo = AgglomerativeClustering(n_clusters=8)
+    # agglo = DBSCAN()
     clustered = agglo.fit_predict(contour_vect)
     return clustered
 
