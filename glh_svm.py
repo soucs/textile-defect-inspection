@@ -23,6 +23,9 @@ X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 
+correlation_matrix = df.corr()
+print(correlation_matrix)
+
 '''# Feature selection using SelectKBest with chi-square test
 k = 2  # Number of top features to select
 selector = SelectKBest(score_func=chi2, k=k)
