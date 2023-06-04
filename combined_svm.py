@@ -9,7 +9,7 @@ glh_df = pd.read_csv(r'C:\Users\LENOVO\CV\textile-defect-inspection\dataset\glh_
 glcm_df = pd.read_csv(r'C:\Users\LENOVO\CV\textile-defect-inspection\dataset\glcm_features.csv')
 
 df = pd.concat([glcm_df,glh_df],axis=1)
-
+print(df.columns)
 X = df.iloc[:,:-1]
 y = df['label']
 
