@@ -1,5 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.cluster import DBSCAN, AgglomerativeClustering
+from sklearn_som.som import SOM
+
+import h5py
 from statistics import mode
 import cv2
 
@@ -15,30 +19,42 @@ def show(imgs):
     except:
         print('Invalid format to display')
 
-img = resize_img(cv2.imread('./dataset/c2_jute/oilstains_colorerror/oilstains_colorerror_01.tif'))
-k = 20
-avgs = []
-for i in range(k,501,k):
-    row = []
-    for j in range(k,501,k):
-        slice = img[i-k:i,j-k:j]
-        # avg = np.mean(slice.flatten())
-        avg = np.linalg.norm(slice.flatten(),ord=2)
-        row.append(avg)
-    avgs.append(row)
+file_path = r'/home/soucs/Python/textile-defect-inspection/dataset/textile_defect_data.hdF5'
+imgs = h5py.File(file_path)['images'][:]
+labels = h5py.File(file_path)['labels'][:]
+fabric = h5py.File(file_path)['fabric'][:]
 
-avgs = np.array(avgs)
-print(avgs.shape)
+i = 160
+org_img, lab = resize_img(imgs[i]), labels[i]
+img = org_img.copy()
 
-x = np.arange(0,256,5)
-fig, ax = plt.subplots(5,5, sharey=True)
-i = j= 0
-for row in avgs:
-    ax[i,j].plot(row)
-    j += 1
-    if j%5==0:
-        i += 1
-        j = 0
-plt.show()
+kernel = 5
+part_img = []
+for r in range(0,500,kernel):
+    for c in range(0,500,kernel):
+        part = img[r:r+kernel,c:c+kernel].flatten()
+        part_img.append(part)
 
-# show([img,avgs])
+part_img = np.array(part_img)
+
+clust = SOM(m=2, n=1, dim=kernel**2)
+clust_img = clust.fit_predict(part_img)
+print(clust_img.shape)
+
+k = 0
+for r in range(0,500,kernel):
+    for c in range(0,500,kernel):
+        if clust_img[k] == 0:
+            img[r:r+kernel,c:c+kernel] = np.zeros_like(img[r:r+kernel,c:c+kernel])
+        else:
+            img[r:r+kernel,c:c+kernel] = np.full(shape=(kernel,kernel), fill_value=255)
+        k += 1
+
+show([org_img,img])
+# show([img,clust_img])
+# print(lab)
+
+# show([img,g_img])
+
+# clust = DBSCAN()
+# clust_img = clust.fit
