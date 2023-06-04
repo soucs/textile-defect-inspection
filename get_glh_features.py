@@ -6,8 +6,8 @@ import h5py
 
 # label_dict = {'good':0, 'holes_cuts':1, 'threaderror':2, 'oilstains_colorerror':3, 'wrinkles':4, 'foreignbodies':5}
 file_path = r'/home/soucs/Python/textile-defect-inspection/dataset/textile_defect_data.hdF5'
-imgs = h5py.File(file_path)['jute_defect_imgs']
-labels = h5py.File(file_path)['jute_defect_labels'][:]
+imgs = h5py.File(file_path)['images'][:]
+labels = h5py.File(file_path)['labels'][:]
 
 features = {'c1':[],'c2':[],'c3':[],'c4':[],'c5':[],'c6':[],'label':labels}
 
@@ -21,7 +21,9 @@ def get_c6(hist):
             numer += h_deriv[i]*hist[i]
         if h_deriv2[i]<0:
             denom += h_deriv[i]*hist[i]
-    return numer/denom
+    denom += 1e-20 # To avoid zero division
+    div = numer/denom
+    return div
 
 for img in imgs:
     hist = cv.calcHist([img], [0], None, [256], [0, 256])
@@ -41,6 +43,7 @@ for img in imgs:
 hist_features = pd.DataFrame(features)
 
 hist_features.to_csv(r'/home/soucs/Python/textile-defect-inspection/dataset/hist_features.csv', index=False)
+print('Feature dataset created')
 
 # # Viewing images
 # cv.imshow('Img',img)
