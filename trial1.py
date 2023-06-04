@@ -18,15 +18,18 @@ def show(imgs):
         cv2.destroyAllWindows()
     except:
         print('Invalid format to display')
+def blur(img):
+    ksize = (5,5)
+    return cv2.blur(img,ksize)
 
 file_path = r'/home/soucs/Python/textile-defect-inspection/dataset/textile_defect_data.hdF5'
 imgs = h5py.File(file_path)['images'][:]
 labels = h5py.File(file_path)['labels'][:]
 fabric = h5py.File(file_path)['fabric'][:]
 
-i = 160
+i = 999
 org_img, lab = resize_img(imgs[i]), labels[i]
-img = org_img.copy()
+img = blur(org_img.copy())
 
 kernel = 5
 part_img = []
@@ -36,18 +39,22 @@ for r in range(0,500,kernel):
         part_img.append(part)
 
 part_img = np.array(part_img)
-
-clust = SOM(m=2, n=1, dim=kernel**2)
+m = 3; n = 1
+clust = SOM(m=m, n=n, dim=kernel**2)
 clust_img = clust.fit_predict(part_img)
-print(clust_img.shape)
+print(set(clust_img.tolist()))
 
 k = 0
+shade = int(255/(m*n))
 for r in range(0,500,kernel):
     for c in range(0,500,kernel):
-        if clust_img[k] == 0:
-            img[r:r+kernel,c:c+kernel] = np.zeros_like(img[r:r+kernel,c:c+kernel])
-        else:
-            img[r:r+kernel,c:c+kernel] = np.full(shape=(kernel,kernel), fill_value=255)
+        for pi,p in enumerate(range(0,255,shade)):
+            if clust_img[k] == pi:
+                img[r:r+kernel,c:c+kernel] = np.full(shape=(kernel,kernel), fill_value=p)
+        # if clust_img[k] == 0:
+        #     img[r:r+kernel,c:c+kernel] = np.zeros_like(img[r:r+kernel,c:c+kernel])
+        # else:
+        #     img[r:r+kernel,c:c+kernel] = np.full(shape=(kernel,kernel), fill_value=255)
         k += 1
 
 show([org_img,img])
