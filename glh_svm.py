@@ -26,21 +26,20 @@ X_test = scaler.transform(X_test)
 # correlation_matrix = df.corr()
 # print(correlation_matrix)
 
-'''# Feature selection using SelectKBest with chi-square test
-k = 2  # Number of top features to select
-selector = SelectKBest(score_func=chi2, k=k)
-X_new = selector.fit_transform(X_train, y_train)
+# # Feature selection using SelectKBest with chi-square test
+# k = 2  # Number of top features to select
+# selector = SelectKBest(score_func=chi2, k=k)
+# X_new = selector.fit_transform(X_train, y_train)
 
-# Get the indices of the selected features
-selected_indices = selector.get_support(indices=True)
-print(selected_indices)
+# # Get the indices of the selected features
+# selected_indices = selector.get_support(indices=True)
+# print(selected_indices)
 
-# Print the indices and names of the selected features
-selected_features = [df.columns[i] for i in selected_indices]
-print("Selected Features:")
-for feature in selected_features:
-    print(feature)'''
-
+# # Print the indices and names of the selected features
+# selected_features = [df.columns[i] for i in selected_indices]
+# print("Selected Features:")
+# for feature in selected_features:
+#     print(feature)
 
 
 # # Principal Component Analysis
